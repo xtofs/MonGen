@@ -17,7 +17,7 @@ namespace MonoGen.DataGeneration
         {
             var ast = RegexAstParsers.Alternatives.Parse(regex);
 
-            return RegexGenerators.Make(ast);
+            return RegexGenerators.Generator(ast);
         }
 
 
