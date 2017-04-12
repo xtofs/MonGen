@@ -21,25 +21,29 @@ namespace MonoGen.Tests
 
         [Theory]
         [InlineData("[A-Z]")]
+        [InlineData("[A-Z]+")]
+        [InlineData("[A-Z]*")]
+        [InlineData("[A-Z]{2}")]
+        [InlineData("[A-Z]{2,}")]
+        [InlineData("[A-Z]{2,4}")]
         [InlineData("[A-Z-]")]
         [InlineData("[-A-Z-]{2}")]
         [InlineData("[A-Z-a-z]")]
-        [InlineData("[A-Z]{2,3}")]
         [InlineData("abc|def")]
         [InlineData("abc[A-Z]")]
         [InlineData("a(b|c)d")]
         public void RegexPatternGeneratorsTests(string regex)
         {
-            // arrange
+            // arrange: create a generator from regex
             var sut = Generators.Regex(regex);
 
-            // act
+            // act: generate a sequence of 100 items from generator
             var rng = new Random(0);
             var actual = sut.Sequence(100).Gen(rng);
 
-            // assert
-            output.WriteLine(string.Join("  ", actual));
-            var re = new System.Text.RegularExpressions.Regex($"\\G{regex}$");
+            // assert: the generated string must match the regex, anchored at start and end
+            output.WriteLine(string.Join(Environment.NewLine, actual));
+            var re = new System.Text.RegularExpressions.Regex($"\\G{regex}$", System.Text.RegularExpressions.RegexOptions.Singleline);
             Assert.True(actual.All(s => re.IsMatch(s)));
         }
 

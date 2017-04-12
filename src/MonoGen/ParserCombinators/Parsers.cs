@@ -8,7 +8,7 @@ namespace MonoGen.ParserCombinators
     public static class Parsers
     {
         #region Output
-        public class Triple<T> : IParserOutput<T>
+        private class Triple<T> : IParserOutput<T>
         {
             public T Value { get; set; }
             public string Str { get; set; }
@@ -31,7 +31,6 @@ namespace MonoGen.ParserCombinators
             return new Triple<T>(s, i, t);
         }
         #endregion
-
 
         public static T Parse<T>(this StringParser<T> p, string s) => p(s, 0).Value;
 
