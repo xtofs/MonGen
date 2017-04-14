@@ -35,7 +35,7 @@ namespace MonoGen.DataGeneration
                     return from i in Generators.Range(0, charset.Count)
                            select charset[i].ToString();
                 case Literal literal:
-                    return Generators.Return(literal.Value);
+                    return Generators.Constant(literal.Value);
                 case Group group:
                     return group.Root.Generator();
                 default:

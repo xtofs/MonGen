@@ -10,9 +10,16 @@ namespace MonoGen.DataGeneration
     public static class Generators
     {
      
-        public static IGenerator<T> Return<T>(T t) => FromFunc(_ => t);
+        /// <summary>
+        /// construct a Generator that returns the given value always
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static IGenerator<T> Constant<T>(T value) => FromFunc(_ => value);
 
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames", MessageId = "0#")]
         public static IGenerator<string> Regex(string regex)
         {
             var ast = RegexAstParsers.Alternatives.Parse(regex);
@@ -42,7 +49,7 @@ namespace MonoGen.DataGeneration
             return Range(0, ticks).Select(i => min + TimeSpan.FromTicks(i));
         }
 
-        public static IGenerator<T> Select<S, T>(this IGenerator<S> gen, Func<S, T> f)
+        public static IGenerator<TTarget> Select<TSource, TTarget>(this IGenerator<TSource> gen, Func<TSource, TTarget> f)
         {
             return FromFunc(rng => f(gen.Gen(rng)));
         }

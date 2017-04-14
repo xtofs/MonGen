@@ -1,9 +1,9 @@
 namespace MonoGen.Regex
 {
-    public class Multiplicities
+    public static class Multiplicities
     {
-        public static Multiplicity One = new Multiplicity(1);
-        public static Multiplicity ZeroToMany = new Multiplicity(0, null);
-        public static Multiplicity OneToMany = new Multiplicity(1, null);
+        public static readonly Multiplicity One = new Multiplicity(1);
+        public static readonly Multiplicity ZeroToMany = new Multiplicity(0, null);
+        public static readonly Multiplicity OneToMany = new Multiplicity(1, null);
     }
 }

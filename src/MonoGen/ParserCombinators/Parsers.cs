@@ -32,7 +32,7 @@ namespace MonoGen.ParserCombinators
         }
         #endregion
 
-        public static T Parse<T>(this StringParser<T> p, string s) => p(s, 0).Value;
+        public static T Parse<T>(this StringParser<T> parser, string str) => parser(str, 0).Value;
 
         public static StringParser<object> Fail => (s, i) => { throw new ParserException(s, i); };
 
@@ -43,12 +43,13 @@ namespace MonoGen.ParserCombinators
         {
             return (string s, int i) =>
              (s.Substring(i, expected.Length) == expected) ?
-                Success(s, i + expected.Length, expected) : Failure<string>(s, i);
+                Success(s, i + expected.Length, expected) :
+                Failure<string>(s, i);
         }
 
 
         public static StringParser<char> Any => (s, p) => (p < s.Length) ? Success(s, p + 1, s[p]) : Failure<char>(s, p);
-        public static StringParser<char> Char(char c) => (s, p) => (p < s.Length && s[p] == c) ? Success(s, p + 1, s[p]) : Failure<char>(s, p);
+        public static StringParser<char> Char(char chr) => (s, p) => (p < s.Length && s[p] == chr) ? Success(s, p + 1, s[p]) : Failure<char>(s, p);
 
         public static StringParser<Match> Regex(string regex)
         {
@@ -63,10 +64,11 @@ namespace MonoGen.ParserCombinators
              };
         }
 
-        public static StringParser<T> Except<T>(this StringParser<T> parser, T c) => parser.Where(t => !t.Equals(c));
+        public static StringParser<T> Except<T>(this StringParser<T> parser, T item) => 
+            parser.Where(t => !t.Equals(item));
 
-        public static StringParser<T> Where<T>(this StringParser<T> parser, Func<T, bool> pred) =>
-            (s, p) => { var r = parser(s, p); return pred(r.Value) ? r : Failure<T>(s, p); };
+        public static StringParser<T> Where<T>(this StringParser<T> parser, Func<T, bool> predicate) =>
+            (s, p) => { var r = parser(s, p); return predicate(r.Value) ? r : Failure<T>(s, p); };
 
         public static StringParser<T> Select<S, T>(this StringParser<S> parser, Func<S, T> f) =>
             (s, p) => { var r = parser(s, p); return Success(r.Str, r.Pos, f(r.Value)); };
@@ -76,7 +78,7 @@ namespace MonoGen.ParserCombinators
 
 
         public static StringParser<T> OrElse<T>(this StringParser<T> parser, StringParser<T> other) =>
-            (s, p) => { try { return parser(s, p); } catch { return other(s, p); } };
+            (s, p) => { try { return parser(s, p); } catch(ParserException) { return other(s, p); } };
 
         public static StringParser<IList<T>> Many<T>(this StringParser<T> parser) =>
             (s, p) =>

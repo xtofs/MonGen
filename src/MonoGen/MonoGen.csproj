@@ -3,6 +3,15 @@
   <Import Project="..\packages\xunit.runner.visualstudio.2.2.0\build\net20\xunit.runner.visualstudio.props" Condition="Exists('..\packages\xunit.runner.visualstudio.2.2.0\build\net20\xunit.runner.visualstudio.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
+    <CodeAnalysisRuleSet>..\CodeAnalysis\CodeAnalysis.ruleset</CodeAnalysisRuleSet>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+  </PropertyGroup>
+  <ItemGroup>
+    <CodeAnalysisDictionary Include="..\CodeAnalysis\CodeAnalysisDictionary.xml">
+      <Link>CodeAnalysisDictionary.xml</Link>
+    </CodeAnalysisDictionary>
+  </ItemGroup>
+  <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{29D12F36-C2C7-4234-826B-E94C0712A44C}</ProjectGuid>
@@ -61,7 +70,7 @@
     <Compile Include="DataGeneration\RegexGenerators.cs" />
     <Compile Include="Extensions\HashCodes.cs" />
     <Compile Include="Extensions\RandomExtensions.cs" />
-    <Compile Include="Extensions\TimeSpanExtension.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="ParserCombinators\IParserOutput.cs" />
     <Compile Include="ParserCombinators\ParserException.cs" />
     <Compile Include="ParserCombinators\Parsers.cs" />
