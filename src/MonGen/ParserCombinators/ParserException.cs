@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.Serialization;
 
 namespace MonoGen.ParserCombinators
 {
@@ -12,6 +13,13 @@ namespace MonoGen.ParserCombinators
         {
             this.Str = str;
             this.Pos = pos;
+        }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("Str", Str);
+            info.AddValue("Pos", Pos);
+            base.GetObjectData(info, context);
         }
     }
 }

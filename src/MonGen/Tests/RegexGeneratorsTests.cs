@@ -52,6 +52,16 @@ namespace MonoGen.Tests
 
     public class GeneratorsCombinatorsTests
     {
+
+        [Fact]
+        public void EndToEnd()
+        {
+            var rng = new Random();
+
+            var persons = Gen.Sequence(100).Gen(rng);
+            Assert.Equal(100, persons.Count);
+        }
+
         public class Person
         {
             public int Id { get; set; }
@@ -64,6 +74,7 @@ namespace MonoGen.Tests
             from n in Generators.Regex("[A-Z][a-z]{2,16}")
             from d in Generators.Range(DateTime.Parse("1930-01-01T00:00:00Z"), DateTime.Parse("2017-01-01T00:00:00Z"))
             select new Person { Id = i, Name = n, Birthday = d };
+
 
     }
 }
