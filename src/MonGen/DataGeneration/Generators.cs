@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using MonoGen;
-using MonoGen.Regex;
+using MonoGen.RegexParsers;
 using MonoGen.ParserCombinators;
 
 namespace MonoGen.DataGeneration

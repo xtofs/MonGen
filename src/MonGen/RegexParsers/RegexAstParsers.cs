@@ -1,7 +1,7 @@
 using System;
 using MonoGen.ParserCombinators;
 
-namespace MonoGen.Regex
+namespace MonoGen.RegexParsers
 {
     public static class RegexAstParsers
     {
@@ -14,9 +14,10 @@ namespace MonoGen.Regex
 
         public static StringParser<Charset> Charset =
             from o in Parsers.Char('[')
-            from e in Range.OrElse(Single).Many().Select(elems => new Charset(elems))
+            from n in Parsers.Char('^').Optional()
+            from e in Range.OrElse(Single).Many()
             from c in Parsers.Char(']')
-            select e;
+            select new Charset(e) { Negated = n.Count > 0 };
 
 
         // TODO: the list of chars is incomplete and also doesn't allow for excaped control chars.
@@ -52,9 +53,9 @@ namespace MonoGen.Regex
             from atoms in Atom.AtLeastOne()
             select new Sequence(atoms);
 
-        public static StringParser<Alternatives> Alternatives =
+        public static StringParser<Regex> Alternatives =
             from sequences in Sequence.SeparatedBy(Parsers.Char('|'))
-            select new Alternatives(sequences);
+            select new Regex(sequences);
 
 
         public static StringParser<Group> Group() =>

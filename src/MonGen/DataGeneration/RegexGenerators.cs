@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Linq;
-using MonoGen.Regex;
+using MonoGen.RegexParsers;
 
 namespace MonoGen.DataGeneration
 {
     public static class RegexGenerators
     {
-        public static IGenerator<string> Generator(this Alternatives alternatives)
+        public static IGenerator<string> Generator(this RegexParsers.Regex alternatives)
         {
             var n = alternatives.Count;
             return from i in Generators.Range(0, n)

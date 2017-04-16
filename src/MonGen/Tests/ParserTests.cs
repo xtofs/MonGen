@@ -1,11 +1,10 @@
 using MonoGen.ParserCombinators;
-using MonoGen.Regex;
+using MonoGen.RegexParsers;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace MonoGen.Tests
 {
-
     public class ParserTests
     {
         [Fact]
@@ -15,7 +14,7 @@ namespace MonoGen.Tests
 
             var result = p.Parse("MS[0-9]{6}|abcd");
 
-            var expected = new Alternatives(
+            var expected = new RegexParsers.Regex(
                 new Sequence(
                     new Atom(new Literal("MS")),
                     new Atom(new Charset(new Charset.Range('0', '9')), new Multiplicity(6))),
@@ -87,25 +86,38 @@ namespace MonoGen.Tests
         }
 
         [Fact]
+        public void TestNegatedCharsetRegex()
+        {
+            var p = RegexAstParsers.Charset;
+
+            var actual = p.Parse("[^A-Z]");
+
+            var expected =
+                new Charset(new Charset.Range('A', 'Z')) { Negated = true };
+
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
         public void TestSampleRegex()
         {
             var p = RegexAstParsers.Alternatives;
 
             var actual = p.Parse("MS[0-9]{6}|(MSFT|LNKD)[1-9][0-9]{3,5}X");
 
-            var expected = new Alternatives(
+            var expected = new RegexParsers.Regex(
                 new Sequence(
                     new Atom(new Literal("MS")),
                     new Atom(
                         new Charset(new Charset.Range('0', '9')),
                         new Multiplicity(6))),
                 new Sequence(
-                    new Atom(new Group(new Alternatives(new Sequence(new Atom(new Literal("MSFT"))),
+                    new Atom(new Group(new RegexParsers.Regex(new Sequence(new Atom(new Literal("MSFT"))),
                         new Sequence(new Atom(new Literal("LNKD")))))),
                     new Atom(new Charset(new Charset.Range('1', '9'))),
-                    new Atom(new Charset(new Charset.Range('0', '9')), new Multiplicity(3,5)),
+                    new Atom(new Charset(new Charset.Range('0', '9')), new Multiplicity(3, 5)),
                     new Atom(new Literal("X"))));
-            
+
             Assert.Equal(expected, actual);
         }
 
@@ -116,11 +128,11 @@ namespace MonoGen.Tests
 
             var actual = p.Parse("a(b|c)d");
 
-            var expected = new Alternatives(
+            var expected = new RegexParsers.Regex(
                 new Sequence(
                     new Atom(new Literal("a")),
                     new Atom(
-                        new Group(new Alternatives(
+                        new Group(new RegexParsers.Regex(
                             new Sequence(new Atom(new Literal("b"))),
                             new Sequence(new Atom(new Literal("c")))))),
 
@@ -133,20 +145,48 @@ namespace MonoGen.Tests
         }
 
         [Fact]
-        public void TestERangeWithMinus()
+        public void TestRangeWithMinus()
         {
             var p = RegexAstParsers.Alternatives;
 
             var actual = p.Parse("[-A-Z]{2}");
 
-            var expected = new Alternatives(
+            var expected = new RegexParsers.Regex(
                 new Sequence(
                     new Atom(new Charset(new Charset.Single('-'), new Charset.Range('A', 'Z')),
                     new Multiplicity(2))));
 
-            // Assert.Equal(expected, actual);
+            Assert.Equal(expected, actual);
+        }
+        [Fact]
+        public void TestError()
+        {
+            var p = RegexAstParsers.Alternatives;
+
+            var ex = Assert.Throws<ParserException>(() => {
+                var actual = p.Parse("[a-z");
+            });
+            Assert.Equal(ex.Line, 1);
+            Assert.Equal(ex.Column, 5);
         }
 
+
+        [Theory]
+        [InlineData("[A-Z]")]
+
+        [InlineData("[a]")]
+        [InlineData("[^a]")]
+        public void TestSampleRegexsParsable(string regex)
+        {
+            var p = RegexAstParsers.Alternatives;
+
+            var e = Record.Exception(() =>
+            {
+                p.Parse(regex);
+            });
+
+            Assert.Null(e);
+        }
 
         private readonly ITestOutputHelper output;
 

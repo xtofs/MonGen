@@ -1,25 +1,36 @@
-using System;
-using System.Runtime.Serialization;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using MonoGen.ParserCombinators;
 
-namespace MonoGen.ParserCombinators
+namespace MonGen.ParserCombinators
 {
-    [Serializable]
-    public class ParserException : Exception
-    {
-        protected int Pos { get; }
-        protected string Str { get; }
 
-        public ParserException(string str, int pos) : base($"Parser failed at {pos} in {str}")
+    class ParserException : Exception
+    {
+        public ParserException(string message, ParserFailedException innerException) : base(message, innerException)
         {
-            this.Str = str;
-            this.Pos = pos;
+            (Line, Column) = GetLineAndColumFromPosition(innerException.Str, innerException.Pos);
         }
 
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        public int Line { get; }
+
+        public int Column { get; }
+
+        private static (int, int) GetLineAndColumFromPosition(string str, int pos)
         {
-            info.AddValue("Str", Str);
-            info.AddValue("Pos", Pos);
-            base.GetObjectData(info, context);
+            var (line, column) = (1, 1);
+            for (var i = 0; i < str.Length; i++)
+            {
+                column += 1;
+                if (str[i] == '\n')
+                {
+                    line++; column = 1;
+                }
+            }
+            return (line, column);
         }
     }
 }

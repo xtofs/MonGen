@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace MonoGen.Regex
+namespace MonoGen.RegexParsers
 {
     public class Charset : ISimpleExpression, IEquatable<Charset>
     {
@@ -127,7 +127,7 @@ namespace MonoGen.Regex
 
     }
 
-    public interface ISimpleExpression // sealed: Group,  Literal, Charset (maybe StartOfMatch, EndOfMatch, AnyChar,)
+    public interface ISimpleExpression // sealed: Group,  Literal, Charset 
     { }
 
     public class Literal : ISimpleExpression
@@ -251,24 +251,24 @@ namespace MonoGen.Regex
 
     }
 
-    public class Alternatives : Collection<Sequence>, IEquatable<Alternatives>
+    public class Regex : Collection<Sequence>, IEquatable<Regex>
     {
-        public Alternatives(params Sequence[] sequences) : base(sequences)
+        public Regex(params Sequence[] sequences) : base(sequences)
         {
         }
 
-        public Alternatives(IList<Sequence> sequences) : base(sequences)
+        public Regex(IList<Sequence> sequences) : base(sequences)
         {
         }
 
-        public bool Equals(Alternatives other)
+        public bool Equals(Regex other)
         {
             return other != null && this.SequenceEqual(other);
         }
 
         public override bool Equals(object obj)
         {
-            var other = obj as Alternatives;
+            var other = obj as Regex;
             return other != null && Equals(other);
         }
 
@@ -283,12 +283,12 @@ namespace MonoGen.Regex
 
     public class Group : ISimpleExpression
     {
-        public Group(Alternatives root)
+        public Group(Regex root)
         {
             Root = root;
         }
 
-        public Alternatives Root { get; }
+        public Regex Root { get; }
 
 
         public bool Equals(Group other)

@@ -5,39 +5,51 @@ using RE = System.Text.RegularExpressions;
 
 namespace MonoGen.ParserCombinators
 {
+
+
     public static class Parsers
     {
+        #region Parse extension that throws proper Exception
+        public static T Parse<T>(this StringParser<T> parser, string str)
+        {
+            try
+            {
+               return parser(str, 0).Value;
+            }
+            catch (ParserFailedException ex)
+            {
+                throw new ParserException($"parser error in {ex.Str}", ex);
+            }
+        }
+    
+
+        #endregion
+
         #region Output
-        private class Triple<T> : IParserOutput<T>
+        private class ParserOutput<T> : IParserOutput<T>
         {
             public T Value { get; set; }
             public string Str { get; set; }
             public int Pos { get; set; }
-
-            public Triple(string str, int pos, T expected)
-            {
-                this.Str = str;
-                this.Pos = pos;
-                this.Value = expected;
-            }
         }
+
+        private static IParserOutput<T> Success<T>(string s, int p, T t)
+        {
+            return new ParserOutput<T> { Str = s, Pos = p, Value = t };
+        }
+
         private static IParserOutput<T> Failure<T>(string s, int i)
         {
-            throw new ParserException(s, i);
+            throw new ParserFailedException(s, i);
         }
 
-        private static IParserOutput<T> Success<T>(string s, int i, T t)
-        {
-            return new Triple<T>(s, i, t);
-        }
         #endregion
 
-        public static T Parse<T>(this StringParser<T> parser, string str) => parser(str, 0).Value;
+        public static StringParser<object> Fail => 
+          (s, i) => Failure<object>(s, i);
 
-        public static StringParser<object> Fail => (s, i) => { throw new ParserException(s, i); };
-
-        public static StringParser<T> Return<T>(T t) => (s, p) => Success(s, p, t);
-
+        public static StringParser<T> Return<T>(T t) =>
+            (s, p) => Success(s, p, t);
 
         public static StringParser<string> Expect(string expected)
         {
@@ -78,7 +90,7 @@ namespace MonoGen.ParserCombinators
 
 
         public static StringParser<T> OrElse<T>(this StringParser<T> parser, StringParser<T> other) =>
-            (s, p) => { try { return parser(s, p); } catch(ParserException) { return other(s, p); } };
+            (s, p) => { try { return parser(s, p); } catch(ParserFailedException) { return other(s, p); } };
 
         public static StringParser<IList<T>> Many<T>(this StringParser<T> parser) =>
             (s, p) =>
@@ -86,7 +98,7 @@ namespace MonoGen.ParserCombinators
                 var o = p;
                 var r = new List<T>();
                 try { while (true) { var q = parser(s, p); p = q.Pos; r.Add(q.Value); } }
-                catch (ParserException) { }
+                catch (ParserFailedException) { }
                 return Success(s, p, r);
             };
 
@@ -102,7 +114,7 @@ namespace MonoGen.ParserCombinators
                         pos = AddSuccess(parser, str, pos, result);
                     }
                 }
-                catch (ParserException)
+                catch (ParserFailedException)
                 {
                     // catch the exception that ended the while loop but swallow it.                    
                 }
@@ -124,7 +136,7 @@ namespace MonoGen.ParserCombinators
                        pos = x; // only avance if both separator and parser are successfull
                    }
                }
-               catch (ParserException)
+               catch (ParserFailedException)
                {
                    // catch the exception that ended the while loop but swallow it.
                }
@@ -150,7 +162,7 @@ namespace MonoGen.ParserCombinators
             {
                 var r = new List<T>();
                 try { p = AddSuccess(parser, s, p, r); }
-                catch (ParserException) { }
+                catch (ParserFailedException) { }
                 return Success(s, p, r);
             };
 
@@ -168,7 +180,7 @@ namespace MonoGen.ParserCombinators
                     {
                         return parser(s, p);
                     }
-                    catch (ParserException)
+                    catch (ParserFailedException)
                     {
                         // try next
                     }
