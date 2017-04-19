@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
-using MonoGen.RegexParsers;
+using MonGen.RegexParsers;
 
-namespace MonoGen.DataGeneration
+namespace MonGen.DataGeneration
 {
     public static class RegexGenerators
     {

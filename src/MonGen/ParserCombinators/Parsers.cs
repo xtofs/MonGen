@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using RE = System.Text.RegularExpressions;
 
-namespace MonoGen.ParserCombinators
+namespace MonGen.ParserCombinators
 {
 
 

@@ -1,9 +1,9 @@
-using MonoGen.ParserCombinators;
-using MonoGen.RegexParsers;
+using MonGen.ParserCombinators;
+using MonGen.RegexParsers;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace MonoGen.Tests
+namespace MonGen.Tests
 {
     public class ParserTests
     {

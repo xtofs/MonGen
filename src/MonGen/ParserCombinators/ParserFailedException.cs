@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace MonoGen.ParserCombinators
+namespace MonGen.ParserCombinators
 {
     public class ParserFailedException : Exception
     {

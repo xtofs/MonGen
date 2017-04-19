@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MonoGen.DataGeneration;
+using MonGen.DataGeneration;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace MonoGen.Tests
+namespace MonGen.Tests
 {
     public class RegexGeneratorsTests
     {
@@ -52,6 +53,31 @@ namespace MonoGen.Tests
 
     public class GeneratorsCombinatorsTests
     {
+     
+
+        [Fact]
+        public void Demo()
+        {
+
+            var gen = Generators.Password(12, "a-z", "A-Z", "0-9", "#$%&*=!");
+           
+            var rng = new Random(1);
+
+            var pwds = gen.Sequence(100000).Gen(rng);
+
+
+            var stats = pwds.SelectMany(i => i)
+                .GroupBy(i => i)
+                .Select(g => (g.Key, g.Count()))
+                .OrderBy(p => p.Item2);
+
+            var o = string.Join("\n", stats);
+            Console.WriteLine(o);
+        }
+
+      
+
+
 
         [Fact]
         public void EndToEnd()

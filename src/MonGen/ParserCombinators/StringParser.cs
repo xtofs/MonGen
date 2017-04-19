@@ -1,4 +1,4 @@
-﻿namespace MonoGen.ParserCombinators
+﻿namespace MonGen.ParserCombinators
 {
     /// <summary>
     ///     the type of a parser that returns a value of type T

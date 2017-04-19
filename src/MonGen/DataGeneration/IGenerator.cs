@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MonoGen.DataGeneration
+namespace MonGen.DataGeneration
 {
     public interface IGenerator<out T>
     {

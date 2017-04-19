@@ -1,7 +1,7 @@
 using System;
-using MonoGen.ParserCombinators;
+using MonGen.ParserCombinators;
 
-namespace MonoGen.RegexParsers
+namespace MonGen.RegexParsers
 {
     public static class RegexAstParsers
     {
@@ -11,6 +11,7 @@ namespace MonoGen.RegexParsers
         public static StringParser<Charset.IElement> Range =
             from m in Parsers.Regex("(.)-(.)")
             select new Charset.Range(m.Groups[1].Value[0], m.Groups[2].Value[0]);
+
 
         public static StringParser<Charset> Charset =
             from o in Parsers.Char('[')

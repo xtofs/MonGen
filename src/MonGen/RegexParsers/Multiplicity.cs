@@ -1,4 +1,4 @@
-namespace MonoGen.RegexParsers
+namespace MonGen.RegexParsers
 {
     public class Multiplicity
     {
