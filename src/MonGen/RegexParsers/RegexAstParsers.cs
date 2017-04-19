@@ -1,7 +1,7 @@
 using System;
-using MonoGen.ParserCombinators;
+using MonGen.ParserCombinators;
 
-namespace MonoGen.RegexParsers
+namespace MonGen.RegexParsers
 {
     public static class RegexAstParsers
     {
@@ -12,13 +12,16 @@ namespace MonoGen.RegexParsers
             from m in Parsers.Regex("(.)-(.)")
             select new Charset.Range(m.Groups[1].Value[0], m.Groups[2].Value[0]);
 
+        public static StringParser<Charset> RawCharterSets =>
+            from elems in Range.OrElse(Single).Many()
+            select new Charset(elems);
+
         public static StringParser<Charset> Charset =
             from o in Parsers.Char('[')
             from n in Parsers.Char('^').Optional()
             from e in Range.OrElse(Single).Many()
             from c in Parsers.Char(']')
             select new Charset(e) { Negated = n.Count > 0 };
-
 
         // TODO: the list of chars is incomplete and also doesn't allow for excaped control chars.
         public static StringParser<Literal> Literal =
@@ -57,12 +60,11 @@ namespace MonoGen.RegexParsers
             from sequences in Sequence.SeparatedBy(Parsers.Char('|'))
             select new Regex(sequences);
 
-
         public static StringParser<Group> Group() =>
             from o in Parsers.Char('(')
             from a in Alternatives
             from c in Parsers.Char(')')
-            select new Group(a);
+            select new Group(a);    
 
     }
 }

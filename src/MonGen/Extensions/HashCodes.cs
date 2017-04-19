@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace MonoGen
+namespace MonGen
 {
     internal static class HashCodes
     {

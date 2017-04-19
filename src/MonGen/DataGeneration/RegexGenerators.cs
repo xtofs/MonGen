@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
-using MonoGen.RegexParsers;
+using MonGen.RegexParsers;
 
-namespace MonoGen.DataGeneration
+namespace MonGen.DataGeneration
 {
     public static class RegexGenerators
     {
@@ -29,18 +29,35 @@ namespace MonoGen.DataGeneration
 
         public static IGenerator<string> Generator(ISimpleExpression expression)
         {
-            switch (expression)
+            var charset = expression as Charset;
+            if (charset != null)
             {
-                case Charset charset:
-                    return from i in Generators.Range(0, charset.Count)
-                           select charset[i].ToString();
-                case Literal literal:
-                    return Generators.Constant(literal.Value);
-                case Group group:
-                    return group.Root.Generator();
-                default:
-                    throw new InvalidCastException($"{nameof(expression)} is not one of Charset, Literal, Group");
+                return from i in Generators.Range(0, charset.Count)
+                       select charset[i].ToString();
             }
+            var literal = expression as Literal;
+            if (literal != null)
+            {
+                return Generators.Constant(literal.Value);
+            }
+            var group = expression as Group;
+            if (group != null)
+            {
+                return group.Root.Generator();
+            }            
+            throw new InvalidCastException($"{nameof(expression)} is not one of Charset, Literal, Group");
+            //switch (expression)
+            //{
+            //    case Charset charset:
+            //        return from i in Generators.Range(0, charset.Count)
+            //               select charset[i].ToString();
+            //    case Literal literal:
+            //        return Generators.Constant(literal.Value);
+            //    case Group group:
+            //        return group.Root.Generator();
+            //    default:
+            //        throw new InvalidCastException($"{nameof(expression)} is not one of Charset, Literal, Group");
+            //}
         }
     }
 }

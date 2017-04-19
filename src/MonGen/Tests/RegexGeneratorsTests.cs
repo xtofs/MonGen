@@ -1,13 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
-using MonoGen.DataGeneration;
+using MonGen.DataGeneration;
+using MonGen.DataGeneration;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace MonoGen.Tests
+namespace MonGen.Tests
 {
     public class RegexGeneratorsTests
     {
@@ -46,35 +47,6 @@ namespace MonoGen.Tests
             var re = new System.Text.RegularExpressions.Regex($"\\G{regex}$", System.Text.RegularExpressions.RegexOptions.Singleline);
             Assert.True(actual.All(s => re.IsMatch(s)));
         }
-
-    }
-
-
-    public class GeneratorsCombinatorsTests
-    {
-
-        [Fact]
-        public void EndToEnd()
-        {
-            var rng = new Random();
-
-            var persons = Gen.Sequence(100).Gen(rng);
-            Assert.Equal(100, persons.Count);
-        }
-
-        public class Person
-        {
-            public int Id { get; set; }
-            public string Name { get; set; }
-            public DateTime Birthday { get; set; }
-        }
-
-        public static IGenerator<Person> Gen =
-            from i in Generators.Range(0, 100)
-            from n in Generators.Regex("[A-Z][a-z]{2,16}")
-            from d in Generators.Range(DateTime.Parse("1930-01-01T00:00:00Z"), DateTime.Parse("2017-01-01T00:00:00Z"))
-            select new Person { Id = i, Name = n, Birthday = d };
-
 
     }
 }

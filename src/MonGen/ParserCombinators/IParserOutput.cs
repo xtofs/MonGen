@@ -1,4 +1,4 @@
-﻿namespace MonoGen.ParserCombinators
+﻿namespace MonGen.ParserCombinators
 {
     public interface IParserOutput<out T>
     {

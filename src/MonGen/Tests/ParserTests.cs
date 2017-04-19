@@ -1,12 +1,20 @@
-using MonoGen.ParserCombinators;
-using MonoGen.RegexParsers;
+using MonGen.ParserCombinators;
+using MonGen.RegexParsers;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace MonoGen.Tests
+namespace MonGen.Tests
 {
     public class ParserTests
     {
+
+        private readonly ITestOutputHelper _output;
+
+        public ParserTests(ITestOutputHelper output)
+        {
+            this._output = output;
+        }
+
         [Fact]
         public void TestAlternative()
         {
@@ -139,7 +147,7 @@ namespace MonoGen.Tests
                     new Atom(new Literal("d"))));
 
             var x = expected[0][1];
-            output.WriteLine(x.ToString());
+            _output.WriteLine(x.ToString());
             Assert.Equal(expected[0][1], actual[0][1]);
             Assert.Equal(expected, actual);
         }
@@ -186,13 +194,6 @@ namespace MonoGen.Tests
             });
 
             Assert.Null(e);
-        }
-
-        private readonly ITestOutputHelper output;
-
-        public ParserTests(ITestOutputHelper output)
-        {
-            this.output = output;
         }
     }
 }
