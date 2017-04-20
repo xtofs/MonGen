@@ -25,7 +25,7 @@ namespace MonGen.DataGeneration
 
         public static IGenerator<T> Sized<T>(this Func<int, IGenerator<T>> f)
         {
-            return Create(_ => value);
+            throw new NotImplementedException();
         }
         // sized:: (Int -> Gen a) -> Gen a
 
