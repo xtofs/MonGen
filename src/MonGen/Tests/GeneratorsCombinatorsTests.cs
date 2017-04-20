@@ -43,45 +43,50 @@ namespace MonGen.Tests
 
 
 
+        /// <summary>
+        /// just some statistics on Password generators. No Asserts.
+        /// </summary>
         [Fact]
         public void PasswordGenerator()
         {
             var charsets = new[] {"a-z", "A-Z", "0-9", "!@#$"};
 
-            for (int i = 8; i < 25; i++)
+            for (int i = 8; i < 10; i++)
             {
                 var gen = Generators.Password(i, charsets);
                 var rng = new Random(0);
 
                 // act
-                var passwords = gen.Sequence(100000).Gen(rng);
+                var passwords = gen.Sequence(10000).Gen(rng);
 
-                // assert
-
-                //var stats = passwords.SelectMany(s => s)
-                //    .GroupBy(c => c)
-                //    .Select(grp => new KeyValuePair<char, int>(grp.Key, grp.Count()))
-                //    .OrderBy(p => p.Value).ThenBy(p => p.Key);
-                //_output.WriteLine(string.Join("\n", stats));
-
+             
+                // "assert" 
                 var css = charsets.Select(cs => Tuple.Create(cs, RegexAstParsers.RawCharterSets.Parse(cs))).ToArray();
 
-                var stats2 = passwords.SelectMany(s => s)
-                    .GroupBy(c => css.First(cs => cs.Item2.Contains(c)))
-                    .Select(grp => new KeyValuePair<string, int>(grp.Key.Item1, grp.Count()))
+                var stats = passwords.SelectMany(s => s)
+                    .AggregateBy(c => css.First(cs => cs.Item2.Contains(c)).Item1, 0, (a,b) => a+1)
                     .ToPercentages()
                     .OrderBy(p => p.Value);
 
                 _output.WriteLine(i.ToString());
-                _output.WriteLine(string.Join("\n", stats2));
+                _output.WriteLine(string.Join("\n", stats.Select(s => $"{s.Key ,-10:S} {s.Value*100 ,6:F2}%")));
                 _output.WriteLine(string.Empty);
             }
         }
+
     }
 
 
     internal static class EnumX
     {
+        public static IEnumerable<KeyValuePair<K, V>> AggregateBy<T,K,V>(this IEnumerable<T> items, 
+            Func<T, K> keySelector, V init, Func<V,T,V> add)
+        {
+            return items
+                .GroupBy(item => keySelector(item))
+                .Select(grp => new KeyValuePair<K, V>(grp.Key, grp.Aggregate(init, add)));
+        }
+
         public static IEnumerable<KeyValuePair<T, double>> ToPercentages<T>(this IEnumerable<KeyValuePair<T, int>> items)
         {
             double sum = items.Sum(item => item.Value);

@@ -1,14 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Runtime.Remoting.Messaging;
 using MonGen.ParserCombinators;
-using MonGen;
 using MonGen.DataGeneration;
-using MonGen.ParserCombinators;
 using MonGen.RegexParsers;
 
 namespace MonGen.DataGeneration
@@ -26,6 +22,12 @@ namespace MonGen.DataGeneration
             return Create(_ => value);
         }
 
+
+        public static IGenerator<T> Sized<T>(this Func<int, IGenerator<T>> f)
+        {
+            return Create(_ => value);
+        }
+        // sized:: (Int -> Gen a) -> Gen a
 
         [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames", MessageId = "0#")]
         public static IGenerator<string> Regex(string regex)
