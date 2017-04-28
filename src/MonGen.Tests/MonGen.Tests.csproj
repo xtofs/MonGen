@@ -9,11 +9,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{FC0B6F2F-2E72-41F0-8D68-0E4E896B10AC}</ProjectGuid>
+    <ProjectGuid>{0E5825C2-53A2-4AF3-97FA-A96AAC44E343}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MonGen</RootNamespace>
-    <AssemblyName>MonGen</AssemblyName>
+    <RootNamespace>MonGen.Tests</RootNamespace>
+    <AssemblyName>MonGen.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp>
@@ -69,28 +69,23 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataGeneration\Generators.cs" />
-    <Compile Include="DataGeneration\IGenerator.cs" />
-    <Compile Include="DataGeneration\RegexGenerators.cs" />
-    <Compile Include="Extensions\HashCodes.cs" />
-    <Compile Include="Extensions\RandomExtensions.cs" />
-    <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="ParserCombinators\IParserOutput.cs" />
-    <Compile Include="ParserCombinators\ParserException.cs" />
-    <Compile Include="ParserCombinators\ParserFailedException.cs" />
-    <Compile Include="ParserCombinators\Parsers.cs" />
-    <Compile Include="ParserCombinators\StringParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RegexParsers\Multiplicities.cs" />
-    <Compile Include="RegexParsers\Multiplicity.cs" />
-    <Compile Include="RegexParsers\RegexAst.cs" />
-    <Compile Include="RegexParsers\RegexAstParsers.cs" />
+    <Compile Include="Tests\GeneratorsCombinatorsTests.cs" />
+    <Compile Include="Tests\ParserTests.cs" />
+    <Compile Include="Tests\RandomExtensionsTests.cs" />
+    <Compile Include="Tests\RegexGeneratorsTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MonGen\MonGen.csproj">
+      <Project>{fc0b6f2f-2e72-41f0-8d68-0e4e896b10ac}</Project>
+      <Name>MonGen</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

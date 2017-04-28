@@ -8,7 +8,7 @@ using MonGen.ParserCombinators;
 namespace MonGen.ParserCombinators
 {
 
-    class ParserException : Exception
+    public class ParserException : Exception
     {
         public ParserException(string message, ParserFailedException innerException) : base(message, innerException)
         {
